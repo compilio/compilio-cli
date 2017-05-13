@@ -1,5 +1,6 @@
 #!/usr/bin/python
 import sys
+
 import requests
 import yaml
 
@@ -15,7 +16,8 @@ if __name__ == '__main__':
     cmd = cmd.strip()
     print(cmd)
 
-    res = requests.post(cfg['compilio_host'] + 'compiler/init', data={'command': cmd})
+    res = requests.post(cfg['compilio_host'] + 'compiler/init',
+                        data={'command': cmd})
     if res.status_code == 200:
         json = res.json()
         input_files = json['input_files']
@@ -26,8 +28,8 @@ if __name__ == '__main__':
         for input_file_path in input_files:
             files[str(i)] = open(input_file_path, 'rb')
 
-        res = requests.post(cfg['compilio_host'] + 'compiler/upload', data={'task_id': task_id}, files=files)
+        res = requests.post(cfg['compilio_host'] + 'compiler/upload',
+                            data={'task_id': task_id}, files=files)
         print(res)
     else:
         print(res.text)
-
