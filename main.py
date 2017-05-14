@@ -2,12 +2,11 @@
 import sys
 
 import requests
-import yaml
+
+from config import Config
 
 if __name__ == '__main__':
-
-    with open("config.yml", 'r') as yml_file:
-        cfg = yaml.load(yml_file)
+    cfg = Config()
 
     cmd = ""
     for i in range(1, len(sys.argv)):
