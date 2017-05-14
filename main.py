@@ -33,3 +33,7 @@ if __name__ == '__main__':
         print(res)
     else:
         print(res.text)
+
+        # TODO : More readable -> Create functions
+        # TODO : Query compilio/status at fixed time
+        # TODO : Get output_files when 'terminated'
