@@ -5,27 +5,34 @@ import requests
 
 from config import Config
 
-if __name__ == '__main__':
-    cfg = Config()
 
+def get_full_command():
     cmd = ""
     for i in range(1, len(sys.argv)):
         cmd += sys.argv[i] + " "
 
     cmd = cmd.strip()
-    print(cmd)
+    return cmd
+
+
+if __name__ == '__main__':
+    cfg = Config()
+
+    command = get_full_command()
+    print(command)
 
     res = requests.post(cfg['compilio_host'] + 'compiler/init',
-                        data={'command': cmd})
+                        data={'command': command})
     if res.status_code == 200:
         json = res.json()
         input_files = json['input_files']
         task_id = json['task_id']
 
         files = {}
-        i = 0
+        file_index = 0
         for input_file_path in input_files:
-            files[str(i)] = open(input_file_path, 'rb')
+            files[str(file_index)] = open(input_file_path, 'rb')
+            file_index += 1
 
         res = requests.post(cfg['compilio_host'] + 'compiler/upload',
                             data={'task_id': task_id}, files=files)
