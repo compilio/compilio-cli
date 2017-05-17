@@ -36,10 +36,8 @@ if __name__ == '__main__':
 
         res = requests.post(cfg['compilio_host'] + 'compiler/upload',
                             data={'task_id': task_id}, files=files)
-        print(res)
-    else:
-        print(res.text)
+    print(res.text)
 
-        # TODO : More readable -> Create functions
-        # TODO : Query compilio/status at fixed time
-        # TODO : Get output_files when 'terminated'
+    # TODO : More readable -> Create functions
+    # TODO : Query compilio/status at fixed time
+    # TODO : Get output_files when 'terminated'
