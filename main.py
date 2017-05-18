@@ -1,5 +1,6 @@
 #!/usr/bin/python
 import sys
+import time
 
 import requests
 
@@ -36,8 +37,17 @@ if __name__ == '__main__':
 
         res = requests.post(cfg['compilio_host'] + 'compiler/upload',
                             data={'task_id': task_id}, files=files)
-    print(res.text)
 
-    # TODO : More readable -> Create functions
-    # TODO : Query compilio/status at fixed time
-    # TODO : Get output_files when 'terminated'
+        # Pooling
+        while True:
+            res = requests.get(cfg['compilio_host'] +
+                               'compiler/task?id=' + task_id)
+            res_json = res.json()
+            if res_json['state'] == 'SUCCESS':
+                print(res_json['output_log'])
+                break
+            time.sleep(0.5)
+
+            # TODO : More readable -> Create functions
+            # TODO : Query compilio/status at fixed time
+            # TODO : Get output_files when 'terminated'
