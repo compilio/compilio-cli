@@ -16,38 +16,54 @@ def get_full_command():
     return cmd
 
 
+def init_task(command):
+    res = requests.post(cfg['compilio_host'] + 'compiler/init',
+                        data={'command': command})
+
+    if res.status_code != 200:
+        return [False, False, res.text]
+
+    json = res.json()
+    input_files = json['input_files']
+    task_id = json['task_id']
+    return [input_files, task_id, res.text]
+
+
+def upload_files(input_files, task_id):
+    files = {}
+    file_index = 0
+    for input_file_path in input_files:
+        files[str(file_index)] = open(input_file_path, 'rb')
+        file_index += 1
+
+    requests.post(cfg['compilio_host'] + 'compiler/upload',
+                  data={'task_id': task_id}, files=files)
+
+
+def wait_task_termination(task_id):
+    while True:
+        res = requests.get(cfg['compilio_host'] +
+                           'compiler/task?id=' + task_id)
+        res_json = res.json()
+        if res_json['state'] == 'SUCCESS':
+            return res_json
+
+        time.sleep(0.5)
+
+
 if __name__ == '__main__':
     cfg = Config()
 
     command = get_full_command()
     print(command)
 
-    res = requests.post(cfg['compilio_host'] + 'compiler/init',
-                        data={'command': command})
-    if res.status_code == 200:
-        json = res.json()
-        input_files = json['input_files']
-        task_id = json['task_id']
+    input_files, task_id, res_text = init_task(command)
 
-        files = {}
-        file_index = 0
-        for input_file_path in input_files:
-            files[str(file_index)] = open(input_file_path, 'rb')
-            file_index += 1
+    if not input_files:
+        print(res_text)
+        exit(1)
 
-        res = requests.post(cfg['compilio_host'] + 'compiler/upload',
-                            data={'task_id': task_id}, files=files)
+    upload_files(input_files, task_id)
 
-        # Pooling
-        while True:
-            res = requests.get(cfg['compilio_host'] +
-                               'compiler/task?id=' + task_id)
-            res_json = res.json()
-            if res_json['state'] == 'SUCCESS':
-                print(res_json['output_log'])
-                break
-            time.sleep(0.5)
-
-            # TODO : More readable -> Create functions
-            # TODO : Query compilio/status at fixed time
-            # TODO : Get output_files when 'terminated'
+    res_json = wait_task_termination(task_id)
+    print(res_json['output_log'])
