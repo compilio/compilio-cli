@@ -45,7 +45,7 @@ def upload_files(input_files, task_id):
 def wait_task_termination(task_id):
     while True:
         res = requests.get(cfg['compilio_host'] +
-                           'compiler/task?id=' + task_id)
+                           'compiler/task?task_id=' + task_id)
         res_json = res.json()
         if res_json['state'] == 'SUCCESS':
             return res_json
@@ -55,7 +55,7 @@ def wait_task_termination(task_id):
 
 def download_output_files(task_id):
     res = requests.get(cfg['compilio_host'] +
-                       'compiler/get_output_files?id=' + task_id)
+                       'compiler/get_output_files?task_id=' + task_id)
     if res.status_code == 200:
         filename = 'output.zip'
         with open(filename, 'w+b') as f:
