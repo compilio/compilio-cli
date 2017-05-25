@@ -67,8 +67,7 @@ def download_output_files(task_id):
         os.remove(filename)
 
 
-if __name__ == '__main__':
-
+def print_license():
     print("""
     Copyright (C) 2017 https://github.com/Compilio
     This program comes with ABSOLUTELY NO WARRANTY;
@@ -76,6 +75,11 @@ if __name__ == '__main__':
     under certain conditions;
     for details see https://compil.io/terms
     """)
+
+
+if __name__ == '__main__':
+
+    print_license()
 
     cfg = Config()
 
