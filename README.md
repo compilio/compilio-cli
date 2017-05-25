@@ -12,5 +12,5 @@ pip install -r requirements.txt
 ## Usage
 
 ```
-python main.py command
+python compilio.py command
 ```
