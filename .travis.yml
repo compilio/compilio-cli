@@ -8,4 +8,4 @@ install:
   - pip install pycodestyle
 
 script:
-  - pycodestyle --first main.py
+  - pycodestyle --first compilio.py
