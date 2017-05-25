@@ -2,6 +2,7 @@
 import os
 import sys
 import time
+import zipfile
 
 import requests
 
@@ -59,6 +60,11 @@ def download_output_files(task_id):
         filename = 'output.zip'
         with open(filename, 'w+b') as f:
             f.write(res.content)
+
+        with zipfile.ZipFile(filename, "r") as zip_ref:
+            zip_ref.extractall("./")
+
+        os.remove(filename)
 
 
 if __name__ == '__main__':
