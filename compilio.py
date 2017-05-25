@@ -97,3 +97,6 @@ if __name__ == '__main__':
     res_json = wait_task_termination(task_id)
     print(res_json['output_log'])
     download_output_files(task_id)
+    print('You can check your task on the website '
+          + cfg['compilio_host'] + '/' + task_id)
+    
