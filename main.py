@@ -68,6 +68,15 @@ def download_output_files(task_id):
 
 
 if __name__ == '__main__':
+
+    print("""
+    Copyright (C) 2017 https://github.com/Compilio
+    This program comes with ABSOLUTELY NO WARRANTY; 
+    This is free software, and you are welcome to redistribute it
+    under certain conditions;
+    for details see https://compil.io/terms
+    """)
+
     cfg = Config()
 
     command = get_full_command()
