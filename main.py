@@ -1,4 +1,5 @@
 #!/usr/bin/python
+import os
 import sys
 import time
 
@@ -51,6 +52,15 @@ def wait_task_termination(task_id):
         time.sleep(0.5)
 
 
+def download_output_files(task_id):
+    res = requests.get(cfg['compilio_host'] +
+                       'compiler/get_output_files?id=' + task_id)
+    if res.status_code == 200:
+        filename = 'output.zip'
+        with open(filename, 'w+b') as f:
+            f.write(res.content)
+
+
 if __name__ == '__main__':
     cfg = Config()
 
@@ -67,3 +77,4 @@ if __name__ == '__main__':
 
     res_json = wait_task_termination(task_id)
     print(res_json['output_log'])
+    download_output_files(task_id)
