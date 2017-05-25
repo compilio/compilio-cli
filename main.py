@@ -19,7 +19,7 @@ def get_full_command():
 
 
 def init_task(command):
-    res = requests.post(cfg['compilio_host'] + 'compiler/init',
+    res = requests.post(cfg['compilio_host'] + '/compiler/init',
                         data={'command': command})
 
     if res.status_code != 200:
@@ -38,14 +38,14 @@ def upload_files(input_files, task_id):
         files[str(file_index)] = open(input_file_path, 'rb')
         file_index += 1
 
-    requests.post(cfg['compilio_host'] + 'compiler/upload',
+    requests.post(cfg['compilio_host'] + '/compiler/upload',
                   data={'task_id': task_id}, files=files)
 
 
 def wait_task_termination(task_id):
     while True:
         res = requests.get(cfg['compilio_host'] +
-                           'compiler/task?task_id=' + task_id)
+                           '/compiler/task?task_id=' + task_id)
         res_json = res.json()
         if res_json['state'] == 'SUCCESS':
             return res_json
@@ -55,7 +55,7 @@ def wait_task_termination(task_id):
 
 def download_output_files(task_id):
     res = requests.get(cfg['compilio_host'] +
-                       'compiler/get_output_files?task_id=' + task_id)
+                       '/compiler/get_output_files?task_id=' + task_id)
     if res.status_code == 200:
         filename = 'output.zip'
         with open(filename, 'w+b') as f:
@@ -70,7 +70,7 @@ def download_output_files(task_id):
 if __name__ == '__main__':
 
     print("""
-    Copyright (C) 2017 https://github.com/Compilio
+    Copyright (C) 2017 https://github.com/compilio
     This program comes with ABSOLUTELY NO WARRANTY; 
     This is free software, and you are welcome to redistribute it
     under certain conditions;
