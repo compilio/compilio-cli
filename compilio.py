@@ -99,4 +99,3 @@ if __name__ == '__main__':
     download_output_files(task_id)
     print('You can check your task on the website '
           + cfg['compilio_host'] + '/' + task_id)
-    
