@@ -107,4 +107,4 @@ def main():
     print(res_json['output_log'])
     download_output_files(task_id, cfg)
     print('You can check your task on the website '
-          + cfg['compilio_host'] + '/' + task_id)
+          + cfg['compilio_host'] + '/task/' + task_id)
