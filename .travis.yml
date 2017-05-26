@@ -10,4 +10,5 @@ install:
 script:
   - pycodestyle --first compilio.py
   - python setup.py install
+  - ls /home/travis/virtualenv/python3.6.1/lib/python3.6/site-packages/compilio_cli-0.1.2-py3.6.egg/compilio/
   - compilio
