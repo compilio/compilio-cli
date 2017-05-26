@@ -31,7 +31,7 @@ def init_task(command, cfg):
     return [input_files, task_id, res.text]
 
 
-def upload_files(input_files, task_id):
+def upload_files(input_files, task_id, cfg):
     files = {}
     file_index = 0
     for input_file_path in input_files:
@@ -42,7 +42,7 @@ def upload_files(input_files, task_id):
                   data={'task_id': task_id}, files=files)
 
 
-def wait_task_termination(task_id):
+def wait_task_termination(task_id, cfg):
     while True:
         res = requests.get(cfg['compilio_host'] +
                            '/compiler/task?task_id=' + task_id)
@@ -53,7 +53,7 @@ def wait_task_termination(task_id):
         time.sleep(0.5)
 
 
-def download_output_files(task_id):
+def download_output_files(task_id, cfg):
     res = requests.get(cfg['compilio_host'] +
                        '/compiler/get_output_files?task_id=' + task_id)
     if res.status_code == 200:
@@ -101,10 +101,10 @@ def main():
         print(res_text)
         exit(1)
 
-    upload_files(input_files, task_id)
+    upload_files(input_files, task_id, cfg)
 
-    res_json = wait_task_termination(task_id)
+    res_json = wait_task_termination(task_id, cfg)
     print(res_json['output_log'])
-    download_output_files(task_id)
+    download_output_files(task_id, cfg)
     print('You can check your task on the website '
           + cfg['compilio_host'] + '/' + task_id)
