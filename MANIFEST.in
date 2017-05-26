@@ -1,1 +1,1 @@
-recursive-include *.yml
+include compilio/config.yml
