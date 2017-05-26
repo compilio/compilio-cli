@@ -1,20 +1,22 @@
 #!/usr/bin/env python
 
-from setuptools import setup, find_packages
+from setuptools import setup
 
 VERSION = '0.1.2'
-
-install_requires = ['PyYAML', 'requests']
 
 setup(
     name='compilio-cli',
     version=VERSION,
     description='CLI tool to interact with Compilio API',
+    long_description=open('README.md').read(),
     author='Quentin de Longraye',
     url='https://github.com/compilio/compilio-cli',
     license='GPL',
-    packages=find_packages(),
-    install_requires=install_requires,
+    packages=['compilio'],
+    package_data={
+        'compilio': ['compilio/*.yml'],
+    },
+    install_requires=['PyYAML', 'requests'],
     entry_points="""
     [console_scripts]
     compilio=compilio.cli:main
