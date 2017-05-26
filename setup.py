@@ -4,6 +4,8 @@ from setuptools import setup, find_packages
 
 VERSION = '0.1.1'
 
+install_requires = ['PyYAML', 'requests']
+
 setup(
     name='compilio-cli',
     version=VERSION,
@@ -12,6 +14,7 @@ setup(
     url='https://github.com/compilio/compilio-cli',
     license='GPL',
     packages=find_packages(),
+    install_requires=install_requires,
     entry_points="""
     [console_scripts]
     compilio=compilio.cli:main
