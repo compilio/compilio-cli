@@ -14,7 +14,7 @@ setup(
     license='GPL',
     packages=['compilio'],
     package_data={
-        'compilio': ['compilio/*.yml'],
+        'compilio': ['*.yml'],
     },
     install_requires=['PyYAML', 'requests'],
     entry_points="""
