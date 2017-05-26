@@ -1,3 +1,4 @@
 PyYAML==3.12
 requests==2.14.2
-
+setuptools>=17.1
+pbr>=1.9

@@ -6,7 +6,7 @@ import zipfile
 
 import requests
 
-from config import Config
+from .config import Config
 
 
 def get_full_command():
@@ -18,7 +18,7 @@ def get_full_command():
     return cmd
 
 
-def init_task(command):
+def init_task(command, cfg):
     res = requests.post(cfg['compilio_host'] + '/compiler/init',
                         data={'command': command})
 
@@ -69,24 +69,33 @@ def download_output_files(task_id):
 
 def print_license():
     print("""
-    Copyright (C) 2017 https://github.com/Compilio
-    This program comes with ABSOLUTELY NO WARRANTY;
-    This is free software, and you are welcome to redistribute it
-    under certain conditions;
-    for details see https://compil.io/terms
+Copyright (C) 2017 https://github.com/Compilio
+This program comes with ABSOLUTELY NO WARRANTY;
+This is free software, and you are welcome to redistribute it
+under certain conditions; for details see https://compil.io/terms
     """)
+    exit(0)
 
 
-if __name__ == '__main__':
+def print_help():
+    print("""
+Write your command after the compilio keyword (e.g. "compilio pdflatex myfile.tex").
+Run "compilio --licence" to see the terms of use.
+    """)
+    exit(0)
 
-    print_license()
 
+def main():
     cfg = Config()
 
     command = get_full_command()
-    print(command)
+    if command == '' or command == '--help':
+        print_help()
 
-    input_files, task_id, res_text = init_task(command)
+    if command == '--licence':
+        print_license()
+
+    input_files, task_id, res_text = init_task(command, cfg)
 
     if not input_files:
         print(res_text)
