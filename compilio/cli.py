@@ -1,4 +1,5 @@
 #!/usr/bin/python
+import argparse
 import os
 import sys
 import time
@@ -120,27 +121,36 @@ Run "compilio --licence" to see the terms of use.
 
 
 def main():
-    cfg = Config()
+    class MyAction(argparse.Action):
+        def __call__(self, parser, namespace, values, option_string=None):
+            setattr(namespace, self.dest, ' '.join(values))
 
-    command = get_full_command()
-    if command == '' or command == '--help':
-        print_help()
+            cfg = Config()
+            command = vars(namespace)['command']
+            if command == '' or command == '--help':
+                print_help()
 
-    if command == '--licence':
-        print_license()
+            if command == '--licence':
+                print_license()
 
-    input_files, task_id, res_text = init_task(command, cfg)
+            input_files, task_id, res_text = init_task(command, cfg)
 
-    if not input_files:
-        print(res_text)
-        exit(1)
+            if not input_files:
+                print(res_text)
+                exit(1)
 
-    upload_files(input_files, task_id, cfg)
+            upload_files(input_files, task_id, cfg)
 
-    print_task_link(task_id, cfg)
+            print_task_link(task_id, cfg)
 
-    res_json = wait_task_termination(task_id, cfg)
-    print_output_log(res_json['output_log'])
-    download_output_files(task_id, cfg)
+            res_json = wait_task_termination(task_id, cfg)
+            print_output_log(res_json['output_log'])
+            download_output_files(task_id, cfg)
 
-    print_task_link(task_id, cfg)
+            print_task_link(task_id, cfg)
+
+    parser = argparse.ArgumentParser(description='Compilio')
+    parser.add_argument('command', help='Input command', nargs='+', action=MyAction)
+    parser.add_argument('--licence', '-l', help='Show license', action='store_true')
+
+    parser.parse_args()
