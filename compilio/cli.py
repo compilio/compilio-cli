@@ -1,7 +1,6 @@
 #!/usr/bin/python
 import argparse
 import os
-import sys
 import time
 import zipfile
 
@@ -9,15 +8,6 @@ import requests
 from requests.exceptions import ConnectionError
 
 from .config import Config
-
-
-def get_full_command():
-    cmd = ""
-    for i in range(1, len(sys.argv)):
-        cmd += sys.argv[i] + " "
-
-    cmd = cmd.strip()
-    return cmd
 
 
 def init_task(command, cfg):
@@ -112,25 +102,17 @@ under certain conditions; for details see https://compil.io/terms
     exit(0)
 
 
-def print_help():
-    print("""
-Write your command after the compilio keyword (e.g. "compilio pdflatex myfile.tex").
-Run "compilio --licence" to see the terms of use.
-    """)
-    exit(0)
-
-
 def main():
     class MyAction(argparse.Action):
         def __call__(self, parser, namespace, values, option_string=None):
             setattr(namespace, self.dest, ' '.join(values))
 
-            cfg = Config()
-            command = vars(namespace)['command']
-            if command == '' or command == '--help':
-                print_help()
+            args = vars(namespace)
 
-            if command == '--licence':
+            cfg = Config()
+            command = args['command']
+
+            if args['license']:
                 print_license()
 
             input_files, task_id, res_text = init_task(command, cfg)
@@ -149,8 +131,9 @@ def main():
 
             print_task_link(task_id, cfg)
 
-    parser = argparse.ArgumentParser(description='Compilio')
+    parser = argparse.ArgumentParser(
+        description='Compilio, Write your command after the compilio keyword (e.g. "compilio pdflatex myfile.tex")')
     parser.add_argument('command', help='Input command', nargs='+', action=MyAction)
-    parser.add_argument('--licence', '-l', help='Show license', action='store_true')
+    parser.add_argument('--license', '-l', help='Show license and terms of use', action='store_true')
 
     parser.parse_args()
