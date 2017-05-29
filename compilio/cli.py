@@ -1,6 +1,7 @@
 #!/usr/bin/python
 import argparse
 import os
+import sys
 import time
 import zipfile
 
@@ -43,24 +44,43 @@ def upload_files(input_files, task_id, cfg):
 
 
 def wait_task_termination(task_id, cfg):
+    def spinning_cursor():
+        while True:
+            for cursor in '|/-\\':
+                yield cursor
+
+    def next_spin(spinner):
+        sys.stdout.write(next(spinner))
+        sys.stdout.flush()
+        sys.stdout.write('\b')
+
+    spinner = spinning_cursor()
+    spinner_speed = 0.1
+    status_update_delay = 1.0
+    waited_time = 999.0
+
     while True:
-        try:
-            res = requests.get(cfg['compilio_host'] +
-                               '/compiler/task?task_id=' + task_id)
-        except ConnectionError:
-            print('Connection error : cannot reach ' + cfg['compilio_host'] + ' on status check')
-            exit(1)
+        time.sleep(spinner_speed)
+        next_spin(spinner)
+        waited_time += spinner_speed
 
-        res_json = res.json()
+        if waited_time >= status_update_delay:
+            waited_time = 0
+            try:
+                res = requests.get(cfg['compilio_host'] +
+                                   '/compiler/task?task_id=' + task_id)
+            except ConnectionError:
+                print('Connection error : cannot reach ' + cfg['compilio_host'] + ' on status check')
+                exit(1)
 
-        if res_json['state'] == 'FAILED':
-            print('Compilation failed.')
-            exit(1)
+            res_json = res.json()
 
-        if res_json['state'] == 'SUCCESS':
-            return res_json
+            if res_json['state'] == 'FAILED':
+                print('Compilation failed.')
+                exit(1)
 
-        time.sleep(0.5)
+            if res_json['state'] == 'SUCCESS':
+                return res_json
 
 
 def download_output_files(task_id, cfg):
