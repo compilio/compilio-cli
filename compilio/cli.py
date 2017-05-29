@@ -135,5 +135,6 @@ def main():
         description='Compilio, Write your command after the compilio keyword (e.g. "compilio pdflatex myfile.tex")')
     parser.add_argument('command', help='Input command', nargs='+', action=ComputeCommand)
     parser.add_argument('--license', '-l', help='Show license and terms of use', action='store_true')
+    parser.add_argument('--verbose', '-v', help='Show debug logs', action='store_true')
 
     parser.parse_args()
