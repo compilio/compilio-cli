@@ -67,6 +67,16 @@ def download_output_files(task_id, cfg):
         os.remove(filename)
 
 
+def print_output_log(output_log):
+    print('\nOutput logs:')
+    print(' 🌧   '.join(('\n' + output_log.lstrip()).splitlines(True)))
+
+
+def print_task_link(task_id, cfg):
+    print('You can check your task on the website '
+          + cfg['compilio_host'] + '/task/' + task_id)
+
+
 def print_license():
     print("""
 Copyright (C) 2017 https://github.com/Compilio
@@ -103,8 +113,10 @@ def main():
 
     upload_files(input_files, task_id, cfg)
 
+    print_task_link(task_id, cfg)
+
     res_json = wait_task_termination(task_id, cfg)
-    print(res_json['output_log'])
+    print_output_log(res_json['output_log'])
     download_output_files(task_id, cfg)
-    print('You can check your task on the website '
-          + cfg['compilio_host'] + '/task/' + task_id)
+
+    print_task_link(task_id, cfg)
