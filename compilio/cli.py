@@ -59,6 +59,8 @@ def wait_task_termination(task_id, cfg):
     status_update_delay = 1.0
     waited_time = 999.0
 
+    printed_log = ''
+
     while True:
         time.sleep(spinner_speed)
         next_spin(spinner)
@@ -74,6 +76,10 @@ def wait_task_termination(task_id, cfg):
                 exit(1)
 
             res_json = res.json()
+
+            logs = res_json['output_log']
+            print(logs.replace(printed_log, ''), end="")
+            printed_log = logs
 
             if res_json['state'] == 'FAILED':
                 print('Compilation failed.')
