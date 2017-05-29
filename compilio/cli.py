@@ -5,6 +5,7 @@ import time
 import zipfile
 
 import requests
+from requests.exceptions import ConnectionError
 
 from .config import Config
 
@@ -19,8 +20,12 @@ def get_full_command():
 
 
 def init_task(command, cfg):
-    res = requests.post(cfg['compilio_host'] + '/compiler/init',
-                        data={'command': command})
+    try:
+        res = requests.post(cfg['compilio_host'] + '/compiler/init',
+                            data={'command': command})
+    except ConnectionError:
+        print('Connection error : cannot reach ' + cfg['compilio_host'] + ' on init')
+        exit(1)
 
     if res.status_code != 200:
         return [False, False, res.text]
@@ -38,14 +43,22 @@ def upload_files(input_files, task_id, cfg):
         files[str(file_index)] = open(input_file_path, 'rb')
         file_index += 1
 
-    requests.post(cfg['compilio_host'] + '/compiler/upload',
-                  data={'task_id': task_id}, files=files)
+    try:
+        requests.post(cfg['compilio_host'] + '/compiler/upload',
+                      data={'task_id': task_id}, files=files)
+    except ConnectionError:
+        print('Connection error : cannot reach ' + cfg['compilio_host'] + ' on upload')
+        exit(1)
 
 
 def wait_task_termination(task_id, cfg):
     while True:
-        res = requests.get(cfg['compilio_host'] +
-                           '/compiler/task?task_id=' + task_id)
+        try:
+            res = requests.get(cfg['compilio_host'] +
+                               '/compiler/task?task_id=' + task_id)
+        except ConnectionError:
+            print('Connection error : cannot reach ' + cfg['compilio_host'] + ' on status check')
+            exit(1)
 
         res_json = res.json()
 
@@ -60,8 +73,13 @@ def wait_task_termination(task_id, cfg):
 
 
 def download_output_files(task_id, cfg):
-    res = requests.get(cfg['compilio_host'] +
-                       '/compiler/get_output_files?task_id=' + task_id)
+    try:
+        res = requests.get(cfg['compilio_host'] +
+                           '/compiler/get_output_files?task_id=' + task_id)
+    except ConnectionError:
+        print('Connection error : cannot reach ' + cfg['compilio_host'] + ' on download')
+        exit(1)
+
     if res.status_code == 200:
         filename = 'output.zip'
         with open(filename, 'w+b') as f:
