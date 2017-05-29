@@ -46,7 +46,13 @@ def wait_task_termination(task_id, cfg):
     while True:
         res = requests.get(cfg['compilio_host'] +
                            '/compiler/task?task_id=' + task_id)
+
         res_json = res.json()
+
+        if res_json['state'] == 'FAILED':
+            print('Compilation failed.')
+            exit(1)
+
         if res_json['state'] == 'SUCCESS':
             return res_json
 
