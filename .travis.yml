@@ -10,4 +10,4 @@ install:
 script:
   - pycodestyle --first compilio.py
   - python setup.py install
-  - compilio
+  - compilio --help
