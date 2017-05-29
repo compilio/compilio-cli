@@ -103,7 +103,7 @@ under certain conditions; for details see https://compil.io/terms
 
 
 def main():
-    class MyAction(argparse.Action):
+    class ComputeCommand(argparse.Action):
         def __call__(self, parser, namespace, values, option_string=None):
             setattr(namespace, self.dest, ' '.join(values))
 
@@ -133,7 +133,7 @@ def main():
 
     parser = argparse.ArgumentParser(
         description='Compilio, Write your command after the compilio keyword (e.g. "compilio pdflatex myfile.tex")')
-    parser.add_argument('command', help='Input command', nargs='+', action=MyAction)
+    parser.add_argument('command', help='Input command', nargs='+', action=ComputeCommand)
     parser.add_argument('--license', '-l', help='Show license and terms of use', action='store_true')
 
     parser.parse_args()
