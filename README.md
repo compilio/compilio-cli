@@ -30,7 +30,7 @@ pip install -r requirements.txt
 You can then run:
 
 ```
-python compilio.py command
+python compilio.py -- command
 ```
 
 You can also build the application locally (for example in a virtual environment)
