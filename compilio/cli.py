@@ -16,7 +16,7 @@ def init_task(command, cfg):
         res = requests.post(cfg['compilio_host'] + '/compiler/init',
                             data={'command': command})
     except ConnectionError:
-        print('Connection error : cannot reach ' + cfg['compilio_host'] + ' on init')
+        print('Connection error: cannot reach ' + cfg['compilio_host'] + ' on init')
         exit(1)
 
     if res.status_code != 200:
@@ -39,14 +39,14 @@ def upload_files(input_files, task_id, cfg):
         requests.post(cfg['compilio_host'] + '/compiler/upload',
                       data={'task_id': task_id}, files=files)
     except ConnectionError:
-        print('Connection error : cannot reach ' + cfg['compilio_host'] + ' on upload')
+        print('Connection error: cannot reach ' + cfg['compilio_host'] + ' on upload')
         exit(1)
 
 
 def wait_task_termination(task_id, cfg):
     def spinning_cursor():
         while True:
-            for cursor in '|/-\\':
+            for cursor in '⠀⠈⠐⠠⢀⢈⢘⢱⢲⢵⣳⣾⣿⣶⣤⣀⠀':
                 yield cursor
 
     def next_spin(spinner):
@@ -55,11 +55,12 @@ def wait_task_termination(task_id, cfg):
         sys.stdout.write('\b')
 
     spinner = spinning_cursor()
-    spinner_speed = 0.1
+    spinner_speed = 0.2
     status_update_delay = 1.0
     waited_time = 999.0
 
     printed_log = ''
+    print('\nThe following logs are taken from the server:')
 
     while True:
         time.sleep(spinner_speed)
@@ -72,21 +73,22 @@ def wait_task_termination(task_id, cfg):
                 res = requests.get(cfg['compilio_host'] +
                                    '/compiler/task?task_id=' + task_id)
             except ConnectionError:
-                print('Connection error : cannot reach ' + cfg['compilio_host'] + ' on status check')
+                print('Connection error: cannot reach ' + cfg['compilio_host'] + ' on status check')
                 exit(1)
 
             res_json = res.json()
 
             logs = res_json['output_log']
-            print(logs.replace(printed_log, ''), end="")
-            printed_log = logs
+            if logs is not None and logs != '':
+                print_output_log(logs, printed_log)
+                printed_log = logs
 
             if res_json['state'] == 'FAILED':
-                print('Compilation failed.')
+                print('\n\nCompilation failed.')
                 exit(1)
 
             if res_json['state'] == 'SUCCESS':
-                return res_json
+                return
 
 
 def download_output_files(task_id, cfg):
@@ -94,7 +96,7 @@ def download_output_files(task_id, cfg):
         res = requests.get(cfg['compilio_host'] +
                            '/compiler/get_output_files?task_id=' + task_id)
     except ConnectionError:
-        print('Connection error : cannot reach ' + cfg['compilio_host'] + ' on download')
+        print('Connection error: cannot reach ' + cfg['compilio_host'] + ' on download')
         exit(1)
 
     if res.status_code == 200:
@@ -108,13 +110,16 @@ def download_output_files(task_id, cfg):
         os.remove(filename)
 
 
-def print_output_log(output_log):
-    print('\nOutput logs:')
-    print(' 🌧   '.join(('\n' + output_log.lstrip()).splitlines(True)))
+def print_output_log(output_log, printed_log):
+    diff_logs = output_log.replace(printed_log, '')
+    if diff_logs == '':
+        return
+
+    print(' 🌧   '.join(('\n' + diff_logs.lstrip()).splitlines(True)), end="")
 
 
 def print_task_link(task_id, cfg):
-    print('You can check your task on the website '
+    print('\nYou can check your task on the website '
           + cfg['compilio_host'] + '/task/' + task_id)
 
 
@@ -157,8 +162,7 @@ def main():
 
             print_task_link(task_id, cfg)
 
-            res_json = wait_task_termination(task_id, cfg)
-            print_output_log(res_json['output_log'])
+            wait_task_termination(task_id, cfg)
             download_output_files(task_id, cfg)
 
             print_task_link(task_id, cfg)
