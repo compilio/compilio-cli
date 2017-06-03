@@ -145,6 +145,7 @@ def main():
             command = args['command']
             if command is None or command == '':
                 parser.print_help()
+                exit(0)
 
             input_files, task_id, res_text = init_task(command, cfg)
 
