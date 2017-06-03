@@ -46,4 +46,4 @@ You can then run:
 compilio
 ```
 
-![demoPdfLatex gif](/assets/demo_pdflatex.gif)
+![demoPdfLatex gif](/resources/demo_pdflatex.gif)
