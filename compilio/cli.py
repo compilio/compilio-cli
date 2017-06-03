@@ -131,15 +131,20 @@ under certain conditions; for details see https://compil.io/terms
 def main():
     class ComputeCommand(argparse.Action):
         def __call__(self, parser, namespace, values, option_string=None):
-            setattr(namespace, self.dest, ' '.join(values))
+            try:
+                setattr(namespace, self.dest, ' '.join(values))
+            except TypeError:
+                pass
 
             args = vars(namespace)
 
-            cfg = Config()
-            command = args['command']
-
             if args['license']:
                 print_license()
+
+            cfg = Config()
+            command = args['command']
+            if command is None:
+                parser.print_help()
 
             input_files, task_id, res_text = init_task(command, cfg)
 
@@ -159,7 +164,7 @@ def main():
 
     parser = argparse.ArgumentParser(
         description='Compilio, Write your command after the compilio keyword (e.g. "compilio pdflatex myfile.tex")')
-    parser.add_argument('command', help='Input command', nargs='+', action=ComputeCommand)
+    parser.add_argument('command', help='Input command', nargs='*', action=ComputeCommand)
     parser.add_argument('--license', '-l', help='Show license and terms of use', action='store_true')
     parser.add_argument('--verbose', '-v', help='Show debug logs', action='store_true')
 
